@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose')
 app.use(express.json())
+const bcrypt = require('bcryptjs')
 
 const mongoUrl = "mongodb+srv://amarpradeep0805:amar1221@cluster0.khkxyni.mongodb.net/?retryWrites=true&w=majority/orderOnCampus"
 
@@ -27,12 +28,13 @@ app.listen(5001, () => {
         if (oldUser) {
             return res.send({ data: 'user already exists' })
         }
+        const encryptedPassword = await bcrypt.hash(password, 10);
         try {
             await user.create({
                 name: name,
                 email: email,
                 mobile,
-                password,
+                password: encryptedPassword,
             });
             res.send({ status: 'ok', data: "user created" });
         } catch (error) {
